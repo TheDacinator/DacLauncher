@@ -74,16 +74,19 @@ local manageFiles = function()
   f.close()
   while true do
     paintutils.drawFilledBox(1,5,x,y,colors.white)
+    term.setTextColor(colors.green)
+    term.setCursorPos(1,y)
+    term.write("Version: "..myfiletable[1][3])
     term.setBackgroundColor(colors.white)
     term.setTextColor(colors.gray)
     term.setCursorPos(3,6)
     for i = 1,#filetable do
       if myfiletable[i][3] == 0 then
-        term.blit("0 ","ee","00")
+        term.blit("# ","ee","00")
       elseif myfiletable[i][3] < filetable[i][3] then
-        term.blit("0 ","44","00")
+        term.blit("# ","44","00")
       elseif myfiletable[i][3] == filetable[i][3] then
-        term.blit("0 ","55","00")
+        term.blit("# ","55","00")
       end
       term.write(filetable[i][2])
       term.setCursorPos(3,6+i)
