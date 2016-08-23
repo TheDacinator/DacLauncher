@@ -81,7 +81,7 @@ local manageFiles = function()
     term.setTextColor(colors.gray)
     term.setCursorPos(3,6)
     for i = 1,#filetable do
-      if myfiletable[i][3] == 0 then
+      if myfiletable[i][3] == 0 and (not fs.exists(myfiletable[i][2])) then
         term.blit("# ","ee","00")
       elseif myfiletable[i][3] < filetable[i][3] or (myfiletable[i][3] == 0 and fs.exists(myfiletable[i][2])) then
         term.blit("# ","44","00")
