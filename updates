@@ -1,12 +1,12 @@
 {
   {
-    "https://raw.githubusercontent.com/TheDacinator/DacLauncher/master/nbstudio.lua",
-    "nbstudio",
+    "https://raw.githubusercontent.com/TheDacinator/DacLauncher/master/DacLauncher.lua",
+    "DacLauncher",
     1,
   },
   {
-    "https://raw.githubusercontent.com/TheDacinator/DacLauncher/master/DacLauncher.lua",
-    "DacLauncher",
+    "https://raw.githubusercontent.com/TheDacinator/DacLauncher/master/nbstudio.lua",
+    "nbstudio",
     1,
   }
 }
