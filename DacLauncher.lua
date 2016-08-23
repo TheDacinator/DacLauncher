@@ -83,7 +83,7 @@ local manageFiles = function()
     for i = 1,#filetable do
       if myfiletable[i][3] == 0 then
         term.blit("# ","ee","00")
-      elseif myfiletable[i][3] < filetable[i][3] then
+      elseif myfiletable[i][3] < filetable[i][3] or (myfiletable[i][3] == 0 and fs.exists(myfiletable[i][2])) then
         term.blit("# ","44","00")
       elseif myfiletable[i][3] == filetable[i][3] then
         term.blit("# ","55","00")
