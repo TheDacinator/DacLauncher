@@ -9,4 +9,9 @@
     "nbstudio",
     1,
   }
+  [3] = {
+    "https://raw.githubusercontent.com/TheDacinator/DacLauncher/master/encryption.lua",
+    "encryption",
+    1,
+  }
 }
