@@ -1,3 +1,3 @@
 # DacLauncher
-Used for my launcher program, ignore if u see this
+Used for my launcher program, ignore if you see this
 asdf
