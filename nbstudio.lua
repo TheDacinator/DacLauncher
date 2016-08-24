@@ -1,6 +1,6 @@
 --Variables
 local x,y = term.getSize()
-local song = {["len"]=100,["tempo"] = 120,["author"] = '',["name"] = ""}
+local song = {["len"]=10,["tempo"] = 120,["author"] = '',["name"] = ""}
 local scroll = 0
 local xscroll = 0
 local textnote = "right"
@@ -210,6 +210,9 @@ local drawOptions = function()
   term.setCursorPos(1,10)
   term.setTextColor(colors.lightBlue)
   term.write("New")
+  term.setCursorPos(1,11)
+  term.setTextColor(colors.purple)
+  term.write("Stop")
 end
 local drawNbs = function()
   term.setTextColor(colors.orange)
@@ -230,23 +233,37 @@ local drawNbs = function()
   term.setTextColor(colors.red)
   term.write("Exit")
 end
+local songplay = false
 local playSong = function()
-  local nbnum = 1
-  for j = 1,song["len"] do
-    for i = 1,table.maxn(song) do
-      if song[i] and song[i][j] then
-        playNote(j+1-xscroll,i+1-scroll,nbs[math.floor(nbnum)])
-        nbnum = nbnum + 0.25
-        if math.floor(nbnum) > #nbs and math.floor(nbnum) > 1 then
+  while true do
+    if songplay == true then
+      local nbnum = 1
+      songplay = false
+      for j = 1,song["len"] do
+        for i = 1,table.maxn(song) do
+          if song[i] and song[i][j] then
+            playNote(j+1-xscroll,i+1-scroll,nbs[math.floor(nbnum)])
+            nbnum = nbnum + 0.25
+            if math.floor(nbnum) > #nbs and math.floor(nbnum) > 1 then
+              break
+            end
+          end
+          if songplay then
+            break
+          end
+        end
+        nbnum = 1
+        sleep(60/song["tempo"])
+        if songplay then
           break
         end
       end
     end
-    nbnum = 1
-    sleep(60/song["tempo"])
+    sleep(0.1)
   end
 end
 --Code
+local code = function()
 term.clear()
 drawEdit()
 drawNotes()
@@ -314,13 +331,15 @@ while condition do
             end
             drawOptions()
           elseif c == 8 then
-            playSong()
+            songplay = true
           elseif c == 9 then
             drawEdit()
             drawNotes()
             break
           elseif c == 10 then
-            song = {["len"]=100,["tempo"]=120,["name"]="",['author']=''}
+            song = {["len"]=10,["tempo"]=120,["name"]="",['author']=''}
+          elseif c == 11 then
+            songplay = 1
           end
         end
       end
@@ -408,7 +427,7 @@ while condition do
     break
   end
   if event == "redstone" then
-    playSong()
+    songplay = true
     rs.setOutput("back",true)
     sleep(0.2)
     rs.setOutput("back",false)
@@ -419,3 +438,5 @@ term.setBackgroundColor(colors.black)
 term.setTextColor(colors.white)
 term.clear()
 term.setCursorPos(1,1)
+end
+parallel.waitForAny(code,playSong)
