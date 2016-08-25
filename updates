@@ -13,10 +13,10 @@
     "https://raw.githubusercontent.com/TheDacinator/DacLauncher/master/encryption.lua",
     "encryption",
     1,
-  }
+  },
   [4] = {
     "https://raw.githubusercontent.com/TheDacinator/DacLauncher/master/SongToCassete.lua",
     "SongToCassete",
     1,
-  }
+  },
 }
