@@ -11,6 +11,20 @@ else
   myfiletable = {}
   f.close()
 end
+local OneOS = false
+if fs.exists("System/OneOS.log") then
+  OneOS = true
+  local term.blit = function(text,color,background)
+    if color == "4" then
+      term.setTextColor(colors.orange)
+    elseif color == "e" then
+      term.setTextColor(colors.red)
+    elseif color == "d" then
+      term.setTextColor(colors.yellow)
+    end
+    term.write(text)
+  end
+end
 --Functions
 local fadein = function()
   paintutils.drawFilledBox(1,1,x,y,colors.gray)
