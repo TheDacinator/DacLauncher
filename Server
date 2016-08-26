@@ -1,0 +1,67 @@
+ local tArgs = {...}
+channel = tonumber(tArgs[1])
+m = nil
+local modems = table.pack(peripheral.find("modem"))
+for i = 1,#modems do
+  if modems[i]["isWireless"]() then
+    m = modems[i]
+  end
+end
+if not m then
+  error("No Wireless Modem!")
+end
+m.open(channel)
+local pullEventRaw = os.pullEventRaw
+os.pullEventRaw = function()
+  local args = table.pack(pullEventRaw())
+  if args[1] == "modem_message" and string.sub(args[5],1,9) == "command: " then
+    return table.unpack(textutils.unserialize(string.sub(args[5],10)))
+  else
+    return table.unpack(args)
+  end
+end
+t = term.current()
+transmit = function(...)
+  m.transmit(channel,channel,"lua: "..textutils.serialize(table.pack(...)))
+end
+term.blit = function(...)
+  t.blit(...)
+  transmit("term.blit",...)
+end
+term.write = function(...)
+  t.write(...)
+  transmit("term.write",...)
+end
+term.clear = function(...)
+  t.clear(...)
+  transmit("term.clear",...)
+end
+term.clearLine = function(...)
+  t.clearLine(...)
+  transmit("term.clearLine",...)
+end
+term.setCursorPos = function(...)
+  t.setCursorPos(...)
+  transmit("term.setCursorPos",...)
+end
+term.setCursorBlink = function(...)
+  t.setCursorBlink(...)
+  transmit("term.setCursorBlink",...)
+end
+term.scroll = function(...)
+  t.scroll(...)
+  transmit("term.scroll",...)
+end
+term.setTextColor = function(...)
+  t.setTextColor(...)
+  transmit("term.setTextColor",...)
+end
+term.setBackgroundColor = function(...)
+  t.setBackgroundColor(...)
+  transmit("term.setBackgroundColor",...)
+end
+p = print
+print = function(...)
+  p(...)
+  transmit("print",...)
+end
