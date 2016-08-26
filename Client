@@ -1,0 +1,41 @@
+local tArgs = {...}
+tArgs[1] = tonumber(tArgs[1])
+term.clear()
+term.setCursorPos(1,1)
+local channel = tArgs[1]
+local modems = table.pack(peripheral.find("modem"))
+local m = nil
+for i = 1,#modems do
+  if modems[i]["isWireless"]() then
+    m = modems[i]
+  end
+end
+if not m then
+  error("No Wireless Modem!")
+end
+local pullEvent = function()
+m.open(tArgs[1])
+  local args = nil
+  while true do
+    args = table.pack(os.pullEvent())
+    if args[1] == "modem_message" then
+      if string.sub(args[5],1,5) == "lua: " then
+        args[5] = textutils.unserialize(string.sub(args[5],6))
+        if string.sub(args[5][1],1,4) == "term" then
+          local key = string.sub(args[5][1],6)
+          table.remove(args[5],1)
+          term[key](table.unpack(args[5]))
+        elseif args[5][1] == "print" then
+          table.remove(args[5],1)
+          print(table.unpack(args[5]))
+        end
+      end
+    else
+      break
+    end
+  end
+  return table.unpack(args)
+end
+while true do
+  m.transmit(5,5,"command: "..textutils.serialize(table.pack(pullEvent())))
+end
