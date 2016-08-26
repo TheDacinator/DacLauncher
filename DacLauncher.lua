@@ -131,6 +131,10 @@ local manageFiles = function()
       elseif b > string.len(filetable[c-5][2])+5 and b < string.len(filetable[c-5][2])+9 then
         parall = false
         shell.run(filetable[c-5][2])
+        paintutils.drawFilledBox(1,1,x,3,colors.white)
+        term.setBackgroundColor(colors.white)
+        term.setTextColor(colors.green)
+        centertext(1,"DacLauncher",2)
         parall = true
       end
     elseif c == #filetable+6 then
