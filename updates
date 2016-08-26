@@ -18,5 +18,15 @@
     "https://raw.githubusercontent.com/TheDacinator/DacLauncher/master/SongToCassete.lua",
     "SongToCassete",
     1,
+  },
+  [5] = {
+    "https://raw.githubusercontent.com/TheDacinator/DacLauncher/master/Client",
+    "RemoteClient",
+    1,
+  },
+  [6] = {
+    "https://raw.githubusercontent.com/TheDacinator/DacLauncher/master/Server",
+    "RemoteServer",
+    1,
   }
 }
