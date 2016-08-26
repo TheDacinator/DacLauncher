@@ -88,7 +88,7 @@ local manageFiles = function()
       elseif myfiletable[i][3] == filetable[i][3] then
         term.blit("# ","55","00")
       end
-      tem.setTextColor(colors.gray)
+      term.setTextColor(colors.gray)
       term.write(filetable[i][2])
       if fs.exists(filetable[i][2]) then
         term.setTextColor(colors.red)
