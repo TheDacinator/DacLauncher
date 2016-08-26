@@ -2,7 +2,7 @@
   [1] = {
     "https://raw.githubusercontent.com/TheDacinator/DacLauncher/master/DacLauncher.lua",
     "DacLauncher",
-    1.16,
+    1.17,
   },
   [2] = {
     "https://raw.githubusercontent.com/TheDacinator/DacLauncher/master/nbstudio.lua",
