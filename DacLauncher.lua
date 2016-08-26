@@ -1,7 +1,7 @@
 --Variables
 local x,y = term.getSize()
 local myfiletable = nil
-local parallel = true
+local parall = true
 if fs.exists("updates") then
   local f = fs.open("updates","r")
   myfiletable = textutils.unserialize(f.readAll())
@@ -38,7 +38,7 @@ local loadingbar = function()
       counter = 0
     end
     term.setCursorPos(3,4)
-    if parallel then
+    if parall then
       for i = 3,x-2 do
         if math.fmod(term.getCursorPos()+counter,5) == 0 then
           term.blit("=","d","8")
@@ -129,9 +129,9 @@ local manageFiles = function()
           sleep(1)
         end
       elseif b > string.len(filetable[c-5][2])+5 and b < string.len(filetable[c-5][2])+9 then
-        parallel = false
+        parall = false
         shell.run(filetable[c-5][2])
-        parallel = true
+        parall = true
       end
     elseif c == #filetable+6 then
       break
