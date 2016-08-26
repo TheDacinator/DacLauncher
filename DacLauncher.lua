@@ -88,36 +88,45 @@ local manageFiles = function()
       elseif myfiletable[i][3] == filetable[i][3] then
         term.blit("# ","55","00")
       end
+      tem.setTextColor(colors.gray)
       term.write(filetable[i][2])
+      if fs.exists(filetable[i][2]) then
+        term.setTextColor(colors.red)
+        term.write(" [R]")
+      end
       term.setCursorPos(3,6+i)
     end
     term.setTextColor(colors.red)
     term.write("Exit")
     local e,a,b,c = os.pullEvent("mouse_click")
     if c > 5 and c < #filetable+6 and myfiletable[c-5][3] < filetable[c-5][3] then
-      paintutils.drawFilledBox(1,5,x,y,colors.white)
-      term.setCursorPos(3,6)
-      term.setTextColor(colors.gray)
-      term.write("Update? (y/n)")
-      local e,f = os.pullEvent("char")
-      if f == "y" then
+      if b < string.len(filetable[c-5][2])+5 then
+        paintutils.drawFilledBox(1,5,x,y,colors.white)
         term.setCursorPos(3,6)
-        term.write("Updating...  ")
-        local file = http.get(filetable[c-5][1])
-        local program = file.readAll()
-        file.close()
-        file = fs.open(filetable[c-5][2],"w")
-        file.write(program)
-        file.close()
-        myfiletable[c-5][3] = filetable[c-5][3]
-        local file = fs.open("updates","w")
-        file.write(textutils.serialize(myfiletable))
-        file.close()
-        sleep(1)
-        term.setCursorPos(3,6)
-        term.setTextColor(colors.lime)
-        term.write("Done!      ")
-        sleep(1)
+        term.setTextColor(colors.gray)
+        term.write("Update? (y/n)")
+        local e,f = os.pullEvent("char")
+        if f == "y" then
+          term.setCursorPos(3,6)
+          term.write("Updating...  ")
+          local file = http.get(filetable[c-5][1])
+          local program = file.readAll()
+          file.close()
+          file = fs.open(filetable[c-5][2],"w")
+          file.write(program)
+          file.close()
+          myfiletable[c-5][3] = filetable[c-5][3]
+          local file = fs.open("updates","w")
+          file.write(textutils.serialize(myfiletable))
+          file.close()
+          sleep(1)
+          term.setCursorPos(3,6)
+          term.setTextColor(colors.lime)
+          term.write("Done!      ")
+          sleep(1)
+        end
+      elseif b > string.len(filetable[c-5][2])+5 and b < string.len(filetable[c-5][2])+9 then
+        shell.run(filetable[c-5][2])
       end
     elseif c == #filetable+6 then
       break
