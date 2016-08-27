@@ -93,7 +93,7 @@ local manageFiles = function()
       end
       term.setTextColor(colors.gray)
       term.write(filetable[i][2])
-      if fs.exists(filetable[i][2]) then
+      if fs.exists(filetable[i][2]) and filetable[i][2] ~= "DacLauncher" then
         term.setTextColor(colors.red)
         term.write(" [R]")
       end
@@ -102,8 +102,8 @@ local manageFiles = function()
     term.setTextColor(colors.red)
     term.write("Exit")
     local e,a,b,c = os.pullEvent("mouse_click")
-    if c > 5 and c < #filetable+6 and myfiletable[c-5][3] < filetable[c-5][3] then
-      if b < string.len(filetable[c-5][2])+5 then
+    if c > 5 and c < #filetable+6 then
+      if b < string.len(filetable[c-5][2])+5 and myfiletable[c-5][3] < filetable[c-5][3] then
         paintutils.drawFilledBox(1,5,x,y,colors.white)
         term.setCursorPos(3,6)
         term.setTextColor(colors.gray)
@@ -128,10 +128,11 @@ local manageFiles = function()
           term.write("Done!      ")
           sleep(1)
         end
-      elseif b > string.len(filetable[c-5][2])+5 and b < string.len(filetable[c-5][2])+9 then
+      elseif b > string.len(filetable[c-5][2])+5 and b < string.len(filetable[c-5][2])+9 and filetable[c-5][2] ~= "DacLauncher" then
         parall = false
         shell.run(filetable[c-5][2])
         paintutils.drawFilledBox(1,1,x,3,colors.white)
+        paintutils.drawBox(1,4,x,4,colors.lightGray)
         term.setBackgroundColor(colors.white)
         term.setTextColor(colors.green)
         centertext(1,"DacLauncher",2)
