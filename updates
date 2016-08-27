@@ -17,7 +17,7 @@
   [4] = {
     "https://raw.githubusercontent.com/TheDacinator/DacLauncher/master/SongToCassete.lua",
     "SongToCassete",
-    1.01,
+    1.02,
   },
   [5] = {
     "https://raw.githubusercontent.com/TheDacinator/DacLauncher/master/Client",
