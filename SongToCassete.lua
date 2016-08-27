@@ -58,7 +58,14 @@ while true do
       end
       drive.setSpeed(speed)
     elseif c == 3 then
-      local page = http.get(popup("Enter in URL to download from"))
+      local page = popup("Enter in URL to download from")
+      if http.checkURL(page) then
+        page = http.get(page)
+      elseif fs.exists(page) then
+        page = fs.open(page,"r")
+      else
+        page = nil
+      end
       song = page.readAll()
       term.setTextColor(colors.white)
       term.setBackgroundColor(colors.black)
@@ -68,18 +75,20 @@ while true do
       drive.stop()
       drive.seek(0-drive.getSize())
       local i = 1
-      while true do
-        for j = 1,1000 do
-          drive.write(string.byte(string.sub(song,i,i)))
-          i = i+1
+      if page then
+        while true do
+          for j = 1,1000 do
+            drive.write(string.byte(string.sub(song,i,i)))
+            i = i+1
+            if i > string.len(song) then
+              break
+            end
+          end
           if i > string.len(song) then
             break
           end
+          sleep(0)
         end
-        if i > string.len(song) then
-          break
-        end
-        sleep(0)
       end
       term.clear()
       term.setCursorPos(1,1)
