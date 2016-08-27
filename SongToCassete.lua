@@ -75,7 +75,7 @@ while true do
       drive.stop()
       drive.seek(0-drive.getSize())
       local i = 1
-      if page and string.len(page) <= drive.getSize() then
+      if page and string.len(song) <= drive.getSize() then
         while true do
           for j = 1,1000 do
             drive.write(string.byte(string.sub(song,i,i)))
@@ -92,7 +92,7 @@ while true do
       end
       term.clear()
       term.setCursorPos(1,1)
-      if string.len(size) > drive.getSize() then
+      if string.len(song) > drive.getSize() then
         term.write("Song Too Large!")
       else
         term.write("Done!")
