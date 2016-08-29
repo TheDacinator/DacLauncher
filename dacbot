@@ -1,0 +1,105 @@
+local orient = nil
+if fs.exists("orientation") then
+  local file = fs.open("orientation","r")
+  orient = textutils.unserialize(file.readAll())
+  file.close()
+else
+  orient = {["x"] = 0,["y"] = 0,["z"] = 0,["comp"] = 0}
+end
+local save = function(...)
+  local file = fs.open("orientation","w")
+  file.write(textutils.serialize(orient))
+  file.close()
+end
+getCoords = function()
+  return orient.x,orient.y,orient.z,orient.comp
+end
+setCoords = function(x,y,z,f)
+  if x then
+    orient.x = x
+  end
+  if y then
+    orient.y = y
+  end
+  if z then
+    orient.z = z
+  end
+  if f then
+    orient.comp = f
+  end
+  save()
+end
+local forward = function(amount)
+  local value = 0
+  if amount < 0 then
+    for i = 1,0-amount do
+      if turtle.back() then
+        value = value-1
+      end
+    end
+  elseif amount > 0 then
+    for i = 1,amount do
+      if turtle.forward() then
+        value = value+1
+      end
+    end
+  end
+  return value
+end
+face = function(dir)
+  if math.abs(orient.comp-dir) == 2 then
+    turtle.turnRight()
+    turtle.turnRight()
+  elseif math.fmod(orient.comp+1,4) == dir then
+    turtle.turnRight()
+  elseif math.fmod(orient.comp+3,4) == dir then
+    turtle.turnLeft()
+  end
+  orient.comp = dir
+  save()
+end
+local m = function(x,y,z)
+  face(3)
+  orient.x = forward(x)+orient.x
+  face(0)
+  orient.z = forward(z)+orient.z
+  if y > 0 then
+    for i = 1,y do
+      if turtle.up() then
+        orient.y = orient.y+1
+      end
+    end
+  elseif y < 0 then
+    for i = 1,0-y do
+      if turtle.down() then
+        orient.y = orient.y-1
+      end
+    end
+  end
+  save()
+end
+moveRel = function(x,y,z)
+  local out = false
+  local origx,origy,origz = orient.x,orient.y,orient.z
+  while true do
+    local cx,cy,cz = orient.x,orient.y,orient.z
+    m(x+origx-cx,y+origy-cy,z+origz-cz)
+    if orient.x == cx and orient.y == cy and orient.z == cz then
+      out = false
+      break
+    elseif x+origx == orient.x and y+origy == orient.y and z+origz == orient.z then
+      out = true
+      break
+    elseif turtle.getFuelLevel() == 0 then
+      out = false
+      break
+    end
+  end
+  if x == 0 and y == 0 and z == 0 then
+    out = true
+  end
+  return out
+end
+move = function(x,y,z)
+  return moveRel(x-orient.x,y-orient.y,z-orient.z)
+end
