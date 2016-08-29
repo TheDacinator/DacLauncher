@@ -30,6 +30,8 @@
     1,
   },
   [7] = {
-    "
+    "https://raw.githubusercontent.com/TheDacinator/DacLauncher/master/dacbot",
+    "dacbot",
+    1,
   }
 }
