@@ -28,5 +28,8 @@
     "https://raw.githubusercontent.com/TheDacinator/DacLauncher/master/Server",
     "RemoteServer",
     1,
+  },
+  [7] = {
+    "
   }
 }
