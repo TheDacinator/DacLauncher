@@ -4,11 +4,13 @@
     "locationA",
     "locationB",
     "locationC",
+    "Original",
   },
   {
     "disk",
     "rom/programs",
     "",
+    "
   },
   {},
 }
