@@ -16,6 +16,6 @@
     false,
     false,
     false,
-    https://raw.githubusercontent.com/TheDacinator/DacLauncher/master/DacLauncher.lua,
+    "https://raw.githubusercontent.com/TheDacinator/DacLauncher/master/DacLauncher.lua",
   },
 }
