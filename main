@@ -10,7 +10,12 @@
     "disk",
     "rom/programs",
     "",
-    "
+    false,
   },
-  {},
+  {
+    false,
+    false,
+    false,
+    https://raw.githubusercontent.com/TheDacinator/DacLauncher/master/DacLauncher.lua,
+  },
 }
