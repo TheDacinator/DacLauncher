@@ -1,14 +1,14 @@
 {
-  [1] = "",
-  [2] = {
+  "",
+  {
     "locationA",
     "locationB",
     "locationC",
   },
-  [3] = {
+  {
     "disk",
     "rom/programs",
     "",
   },
-  [4] = {},
+  {},
 }
