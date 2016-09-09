@@ -1,0 +1,414 @@
+--Variables
+local locations = ""
+local x,y = term.getSize()
+local orig = term.current()
+local main = window.create(term.current(),1,1,x,y,true)
+local version = 2
+local url = "https://raw.githubusercontent.com/TheDacinator/DacLauncher/master/main"
+local origurl = url
+local updateurl = false
+local origgoesto = false
+local useonline = true
+local scroll = 1
+local list = {}
+local goesto = {}
+local source = false
+local clipboard = false
+local origlist = false
+local bookmarks = {"https://raw.githubusercontent.com/TheDacinator/DacLauncher/master/main","disk",""}
+local booknicks = {"Homepage","Drive","Main Directory"}
+if fs.exists("dlbookmarks") then
+  local file = fs.open("dlbookmarks","r")
+  bookmarks,booknicks = table.unpack(textutils.unserialize(file.readAll()))
+  file.close()
+end
+--Functions
+local drawTop = function()
+  paintutils.drawBox(1,1,x,1,colors.white)
+  term.setCursorPos(1,1)
+  term.setTextColor(colors.green)
+  term.setBackgroundColor(colors.white)
+  term.write("Dac")
+  term.setTextColor(colors.lime)
+  term.write("Launcher")
+  local vers = "Version: "..version
+  term.setCursorPos(x-string.len(vers)+1,1)
+  term.setTextColor(colors.orange)
+  term.write(vers)
+end
+local drawBar = function(rd)
+  paintutils.drawBox(1,2,x,2,colors.lightGray)
+  term.setCursorPos(x,2)
+  term.blit("+","1","7")
+  term.setCursorPos(x-4,2)
+  if useonline then
+    term.setTextColor(colors.white)
+    term.setBackgroundColor(colors.lightBlue)
+    term.write("HTTP")
+  else
+    term.setTextColor(colors.white)
+    term.setBackgroundColor(colors.green)
+    term.write("FILE")
+  end
+  term.setCursorPos(1,2)
+  term.setBackgroundColor(colors.lightGray)
+  term.setTextColor(colors.gray)
+  if rd then
+    url = read()
+    origlist = false
+    if string.sub(url,1,7) == "http://" or string.sub(url,1,8) == "https://" then
+      useonline = true
+    else
+      useonline = false
+    end
+  else
+    term.write(string.sub(url,1,x-5))
+  end
+end
+local rclick = function(px,py,args,parent)
+  local maxl = 1
+  if #args > 0 then
+    for i = 1,#args do
+      if string.len(args[i]) > maxl then
+        maxl = string.len(args[i])
+      end
+    end
+    if px > x-maxl+1 then
+      px = x-maxl+1
+    end
+    if py > y-#args+1 then
+      py = y-#args+1
+    end
+    local win = window.create(parent,px,py,maxl,#args,true)
+    win.setTextColor(colors.green)
+    win.setBackgroundColor(colors.white)
+    for i = 1,#args do
+      win.setCursorPos(1,i)
+      win.write(args[i]..string.rep(" ",maxl-string.len(args[i])))
+    end
+    local e,a,b,c = os.pullEvent("mouse_click")
+    local out = false
+    if b >= px and b < px+maxl and c >= py and c < py+#args then
+      out = c-py+1
+    end
+    win.setVisible(false)
+    main.redraw()
+    return out
+  end
+end
+local drawItems = function()
+  term.setBackgroundColor(colors.black)
+  if string.sub(url,1,7) == "http://" or string.sub(url,1,8) == "https://" then
+    useonline = true
+  else
+    useonline = false
+  end
+  if useonline and (not origlist) then
+    local file = http.get(url)
+    local page = textutils.unserialize(file.readAll())
+    if page then
+      source = page[1]
+      list = page[2]
+      goesto = page[3]
+      locations = page[4]
+    else
+      url = ""
+      drawBar()
+      term.setBackgroundColor(colors.black)
+    end
+    file.close()
+  elseif not origlist then
+    if fs.isDir(url) then
+      list = fs.list(url)
+    else
+      url = ""
+      list = fs.list("")
+      drawBar()
+      term.setBackgroundColor(colors.black)
+    end
+    for i = 1,#list do
+      if fs.isDir(fs.combine(url,list[i])) then
+        goesto[i] = fs.combine(url,list[i])
+      else
+        goesto[i] = false
+      end
+    end
+    if fs.getDir(url) == ".." then
+      source = false
+    else
+      source = fs.getDir(url)
+    end
+  end
+  for i = scroll,#list do
+    if goesto[i] then
+      term.setTextColor(colors.green)
+    else
+      term.setTextColor(colors.white)
+    end
+    term.setCursorPos(1,i-scroll+3)
+    term.write(list[i]..string.rep(" ",x-string.len(list[i])))
+    if i-scroll+4 > y then
+      break
+    end
+  end
+  local cx,cy = term.getCursorPos()
+  if cy < y then
+    paintutils.drawFilledBox(1,cy+1,x,y)
+  end
+end
+local paste = function()
+  if clipboard then
+    if clipboard[2] then
+      fs.makeDir(paste[1])
+    else
+      local file = fs.open(fs.combine(url,clipboard[1]),"w")
+      file.write(clipboard[3])
+      file.close()
+    end
+    drawItems()
+  end
+end
+local answer = function(question)
+  local win = window.create(orig,1,y,x,1,true)
+  win.setCursorPos(1,1)
+  win.setBackgroundColor(colors.lightGray)
+  win.setTextColor(colors.gray)
+  win.write(question..string.rep(" ",x-string.len(question)))
+  local old = term.current()
+  term.redirect(orig)
+  term.setCursorPos(string.len(question)+1,y)
+  term.setBackgroundColor(colors.lightGray)
+  term.setTextColor(colors.black)
+  local out = read()
+  term.redirect(old)
+  win.setVisible(false)
+  main.redraw()
+  drawBar()
+  drawTop()
+  drawItems()
+  return out
+end
+local savebm = function()
+  local file = fs.open("dlbookmarks","w")
+  file.write(textutils.serialize({bookmarks,booknicks}))
+  file.close()
+end
+local jointbl = function(a,b)
+  local out = a
+  for key,value in ipairs(b) do
+    table.insert(out,value)
+  end
+  return out
+end
+local make = function(isDir)
+  if isDir then
+    fs.makeDir(fs.combine(url,answer("Enter Directory Name: ")))
+  else
+    local file = fs.open(fs.combine(url,answer("Enter File Name: ")),"w")
+    file.write("")
+    file.close()
+  end
+  origlist = false
+  drawTop()
+  drawBar()
+  drawItems()
+end
+local runargs = function(c)
+  local inp = answer("Enter Program Arguments: ")
+  local func = loadstring("")
+  local values = {}
+  if useonline then
+    local file = http.get(locations[c-3+scroll])
+    func = loadstring(file.readAll())
+    file.close()
+  else
+    values = {fs.combine(url,list[c-3+scroll])}
+  end
+  for value in string.gmatch(inp,"[^, ]+") do
+    table.insert(values,value)
+  end
+  term.clear()
+  term.setCursorPos(1,1)
+  if useonline then
+    func(table.unpack(values))
+  else
+    shell.run(table.unpack(values))
+  end
+  drawItems()
+  drawTop()
+  drawBar()
+end
+--Code
+term.redirect(main)
+drawTop()
+drawBar()
+drawItems()
+while true do
+  local e,a,b,c = os.pullEvent()
+  if e == "mouse_click" then
+    if a == 1 then
+      if b < x-4 and c == 2 then
+        drawBar(true)
+        drawBar()
+        drawItems()
+      elseif c > 2 and list[c-3+scroll] and goesto[c-3+scroll] then
+        url = goesto[c-3+scroll]
+        origlist = false
+        scroll = 1
+        drawBar()
+        drawItems()
+      elseif c > 2 and list[c-3+scroll] and (not goesto[c-3+scroll]) then
+        if useonline then
+          if locations[c-3+scroll] then
+            term.clear()
+            term.setCursorPos(1,1)
+            local web = http.get(locations[c-3+scroll])
+            loadstring(web.readAll())()
+            web.close()
+            drawTop()
+            drawBar()
+            drawItems()
+          end
+        else
+          term.clear()
+          term.setCursorPos(1,1)
+          shell.run(fs.combine(url,list[c-3+scroll]))
+          drawTop()
+          drawBar()
+          drawItems()
+        end
+      elseif c == 2 and b == x then
+        local selection = rclick(x,3,jointbl({"Add","Remove"},booknicks),orig)
+        if selection == 1 then
+          table.insert(bookmarks,answer("Enter new URL: "))
+          table.insert(booknicks,answer("Enter bookmark nickname: "))
+          savebm()
+        elseif selection == 2 then
+          local selection = rclick(x,3,booknicks,orig)
+          if selection then
+            table.remove(bookmarks,selection)
+            table.remove(booknicks,selection)
+            savebm()
+          end
+        elseif selection and selection > 2 then
+          url = bookmarks[selection-2]
+          drawBar()
+          drawItems()
+        end
+      end
+    elseif a == 2 then
+      if c > 2 and list[c-3+scroll] and (not goesto[c-3+scroll]) then
+        if useonline then
+          local selection = rclick(b,c,{"Copy","Run with Arguments"},orig)
+          if selection == 1 then
+            local file = http.get(locations[c-3+scroll])
+            clipboard = {list[c-3+scroll],goesto[c-3+scroll],file.readAll()}
+            file.close()
+          elseif selection == 2 then
+            runargs(c)
+          end
+        else
+          local selection = rclick(b,c,{"Copy","Paste","Delete","Rename","Make File","Make Directory","Edit","Run with Arguments"},orig)
+          if selection then
+            if selection == 1 then
+              local file = fs.open(fs.combine(url,list[c-3+scroll]),"r")
+              clipboard = {list[c-3+scroll],goesto[c-3+scroll],file.readAll()}
+              file.close()
+            elseif selection == 2 then
+              paste()
+            elseif selection == 3 then
+              fs.delete(fs.combine(url,list[c-3+scroll]))
+              paintutils.drawFilledBox(1,3,x,y,colors.black)
+              drawItems()
+            elseif selection == 4 then
+              local file = fs.open(fs.combine(url,list[c-3+scroll]),"r")
+              local data = file.readAll()
+              file.close()
+              fs.delete(fs.combine(url,list[c-3+scroll]))
+              local file = fs.open(fs.combine(url,answer("Enter new name: ")),"w")
+              drawItems()
+              file.write(data)
+              file.close()
+            elseif selection == 5 then
+              make(false)
+            elseif selection == 6 then
+              make(true)
+            elseif selection == 7 then
+              term.clear()
+              term.setCursorPos(1,1)
+              shell.run("rom/programs/edit",fs.combine(url,list[c-3+scroll]))
+              drawTop()
+              drawBar()
+              drawItems()
+            elseif selection == 8 then
+              runargs(c)
+            end
+          end
+        end
+      elseif c > 2 and list[c-3+scroll] and goesto[c-3+scroll] and (not useonline) then
+        local selection = rclick(b,c,{"Paste","Delete","Make File","Make Directory"},orig)
+        if selection == 1 then
+          paste()
+        elseif selection == 2 then
+          fs.delete(fs.combine(url,list[c-3+scroll]))
+          paintutils.drawFilledBox(1,3,x,y,colors.black)
+          drawItems()
+        elseif selection == 3 then
+          make(false)
+        elseif selection == 4 then
+          make(true)
+        end
+      elseif c > 2 and (not useonline) then
+        local selection = rclick(b,c,{"Paste","Make File","Make Directory"},orig)
+        if selection == 1 then
+          paste()
+        elseif selection == 2 then
+          make(false)
+        elseif selection == 3 then
+          make(true)
+        end
+      end
+    end
+  elseif e == "mouse_scroll" then
+    if c > 2 then
+      if a == 1 and scroll <= #list-(y-2) then
+        scroll = scroll+1
+      elseif a == -1 and scroll > 1 then
+        scroll = scroll-1
+      end
+      drawItems()
+    end
+  elseif e == "key" and a == 14 and b == false and source then
+    url = source
+    scroll = 1
+    drawBar()
+    drawItems()
+  elseif e == "char" and a == "f" then
+    local sort = answer("Find: ")
+    if not origlist then
+      origlist = list
+    end
+    if not origgoesto then
+      origgoesto = goesto
+    end
+    if url ~= origurl or updateurl then
+      if updateurl then
+        drawItems()
+      end
+      origurl = url
+      origgoesto = goesto
+    end
+    list = {}
+    goesto = {}
+    for i = 1,#origlist do
+      if string.lower(sort) == string.lower(string.sub(origlist[i],1,string.len(sort))) then
+        table.insert(list,origlist[i])
+        table.insert(goesto,origgoesto[i])
+      end
+    end
+    scroll = 1
+    paintutils.drawFilledBox(1,3,x,y,colors.black)
+    drawItems()
+    drawBar()
+  end
+end
