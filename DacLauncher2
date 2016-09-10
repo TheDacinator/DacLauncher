@@ -297,7 +297,7 @@ while true do
         end
       end
     elseif a == 2 then
-      if c > 2 and list[c-3+scroll] and (not goesto[c-3+scroll]) then
+      if c > 2 and list[c-3+scroll] and locations[c-3+scroll] and (not goesto[c-3+scroll]) then
         if useonline then
           local selection = rclick(b,c,{"Copy","Run with Arguments"},orig)
           if selection == 1 then
