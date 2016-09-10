@@ -1,9 +1,10 @@
 --Variables
+local cleanenv = getfenv()
 local locations = ""
 local x,y = term.getSize()
 local orig = term.current()
 local main = window.create(term.current(),1,1,x,y,true)
-local version = 2.04
+local version = 2.05
 local url = "https://raw.githubusercontent.com/TheDacinator/DacLauncher/master/main"
 local origurl = url
 local updateurl = false
@@ -230,7 +231,9 @@ local runargs = function(c)
   term.clear()
   term.setCursorPos(1,1)
   if useonline then
-    func(table.unpack(values))
+    local funky = function() func(table.unpack(values)) end
+    setfenv(funky,cleanenv)
+    funky()
   else
     shell.run(table.unpack(values))
   end
@@ -263,7 +266,9 @@ while true do
             term.clear()
             term.setCursorPos(1,1)
             local web = http.get(locations[c-3+scroll])
-            loadstring(web.readAll())()
+            local func = loadstring(web.readAll())
+            setfenv(func,cleanenv)
+            func()
             web.close()
             drawTop()
             drawBar()
