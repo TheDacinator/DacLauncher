@@ -3,7 +3,7 @@ local locations = ""
 local x,y = term.getSize()
 local orig = term.current()
 local main = window.create(term.current(),1,1,x,y,true)
-local version = 2.01
+local version = 2.02
 local url = "https://raw.githubusercontent.com/TheDacinator/DacLauncher/master/main"
 local origurl = url
 local updateurl = false
@@ -297,8 +297,8 @@ while true do
         end
       end
     elseif a == 2 then
-      if c > 2 and list[c-3+scroll] and locations[c-3+scroll] and (not goesto[c-3+scroll]) then
-        if useonline then
+      if c > 2 and list[c-3+scroll] and (not goesto[c-3+scroll]) then
+        if useonline and locations[c-3+scroll] then
           local selection = rclick(b,c,{"Copy","Run with Arguments"},orig)
           if selection == 1 then
             local file = http.get(locations[c-3+scroll])
