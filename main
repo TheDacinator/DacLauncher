@@ -1,13 +1,13 @@
 {
   "",
   {
-    "locationA",
+    "Text",
     "locationB",
     "locationC",
     "Original",
   },
   {
-    "disk",
+    false,
     "rom/programs",
     "",
     false,
