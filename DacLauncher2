@@ -417,7 +417,12 @@ while true do
     drawBar()
   elseif e == "key" and a == 46 and b == false then
     os.pullEvent("char")
-    local exec = answer("> ")
+    if useonline then
+      shell.setdir("")
+    else
+      shell.setdir(url)
+    end
+    local exec = answer(shell.dir().."> ")
     term.clear()
     term.setCursorPos(1,1)
     local run = {}
