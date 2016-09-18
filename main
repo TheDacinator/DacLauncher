@@ -19,6 +19,6 @@
     false,
     false,
     "https://raw.githubusercontent.com/TheDacinator/DacLauncher/master/old%20launcher",
-    false,
+    "https://raw.githubusercontent.com/TheDacinator/DacLauncher/master/LauncherPrograms",
   },
 }
