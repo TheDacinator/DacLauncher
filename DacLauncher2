@@ -416,6 +416,7 @@ while true do
     drawItems()
     drawBar()
   elseif e == "key" and a == 46 and b == false then
+    os.pullEvent("char")
     local exec = answer("> ")
     term.clear()
     term.setCursorPos(1,1)
@@ -424,8 +425,10 @@ while true do
       table.insert(run,value)
     end
     shell.run(table.unpack(run))
+    print("Press Any Key To Continue")
+    os.pullEvent("char")
     drawTop()
     drawBar()
-    drawEdit()
+    drawItems()
   end
 end
