@@ -421,7 +421,7 @@ while true do
     term.clear()
     term.setCursorPos(1,1)
     local run = {}
-    for value in string.gmatch(exec,"[^ ]") do
+    for value in string.gmatch(exec,"[^ ]+") do
       table.insert(run,value)
     end
     shell.run(table.unpack(run))
