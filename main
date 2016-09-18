@@ -12,13 +12,13 @@
     "",
     "disk",
     false,
-    false,
+    "https://raw.githubusercontent.com/TheDacinator/DacLauncher/master/LauncherPrograms",
   },
   {
     false,
     false,
     false,
     "https://raw.githubusercontent.com/TheDacinator/DacLauncher/master/old%20launcher",
-    "https://raw.githubusercontent.com/TheDacinator/DacLauncher/master/LauncherPrograms",
+    false,
   },
 }
