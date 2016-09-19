@@ -1,0 +1,60 @@
+local posplayers = table.pack(peripheral.find("tape_drive"))
+local players = {}
+for i = 1,#posplayers do
+  if posplayers[i].getLabel() then
+    table.insert(players,posplayers[i])
+  end
+end
+term.clear()
+local draw = function()
+  for i = 1,#players do
+    if players[i].getState() == "PLAYING" then
+      term.setTextColor(colors.lime)
+    elseif players[i].getState() == "REWINDING" then
+      term.setTextColor(colors.yellow)
+    elseif players[i].getState() == "FORWARDING" then
+      term.setTextColor(colors.purple)
+    elseif players[i].getState() == "STOPPED" then
+      term.setTextColor(colors.red)
+    end
+    term.setCursorPos(1,i)
+    term.write(players[i].getLabel())
+  end
+end
+while true do
+  draw()
+  local e,a,b,c = os.pullEvent()
+  if e == "command" and b[1] == "song" and b[2] then
+    e = "mouse_click"
+    if b[#b] == "p" then
+      b[2] = table.concat(b," ",2,#b-1)
+    else
+      b[2] = table.concat(b," ",2)
+    end
+    c = tonumber(b[2])
+    if not c then
+      c = 100
+      for i = 1,#players do
+        if b[2] == players[i].getLabel() then
+          c = i
+          break
+        end
+      end
+    end
+    if b[#b] and #b > 2 and b[#b] == "p" then
+      a = 2
+    else
+      a = 1
+    end
+  end
+  if e == "mouse_click" and c <= #players then
+    if players[c].getState() == "PLAYING" then
+      players[c].stop()
+      if a == 1 then
+        players[c].seek(0-players[c].getSize())
+      end
+    else
+      players[c].play()
+    end
+  end
+end
