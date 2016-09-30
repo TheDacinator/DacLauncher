@@ -1,0 +1,84 @@
+--rcall.connect(side,channel,[encyrptkey]) -Returns object for sending
+--rcall.host(key) -Returns computer id for transmitting
+--rcall.exec(func,val1,val2...) -Returns function output
+local cleanenv = getfenv()
+local functions = loadstring(http.get('https://raw.githubusercontent.com/TheDacinator/DacLauncher/master/encryption.lua').readAll())
+local encryption = {}
+local connected = false
+setfenv(functions,encryption)
+functions()
+for key,value in pairs(encryption) do
+  setfenv(encryption[key],cleanenv)
+end
+local removeenter = function(str)
+  local out = ""
+  for i = 1,string.len(str) do
+    if string.sub(str,i,i) ~= string.char(10) then
+      out = out..string.sub(str,i,i)
+    end
+  end
+  return out
+end
+--local send = nil
+--local receive = nil
+local makeconn = function(side,channel,key)
+  rednet.open(side)
+  send = function(message)
+    rednet.send(channel,encryption.encrypt(key,removeenter(textutils.serialize(message))),"rcall")
+  end
+  receive = function()
+    local id,message,protocol = nil
+    while true do
+      id,message,protocol = rednet.receive("rcall")
+      if protocol == "rcall" and textutils.unserialize(encryption.decrypt(key,message)) then
+        break
+      end
+    end
+    return textutils.unserialize(encryption.decrypt(key,message))
+  end
+end
+connect = function(side,channel,key)
+  if not key then
+    key = ""
+  end
+  makeconn(side,channel,key)
+  connected = true
+end
+host = function()
+  if not connected then
+    error("Please Connect First!")
+  end
+  while true do
+    local message = receive()
+    if message[1] == "exec" then
+      table.remove(message,1)
+      local func = message[1]
+      table.remove(message,1)
+      local out = nil
+      if string.sub(func,1,1) == " " then
+        out = loadstring(string.sub(func,2))(table.unpack(message))
+      else
+        out = loadstring("return "..func)()(table.unpack(message))
+      end
+      send({"out",out})
+    end
+  end
+end
+exec = function(...)
+  if not connected then
+    error("Please Connect First!")
+  end
+  local message = table.pack(...)
+  table.insert(message,1,"exec")
+  send(message)
+  return receive()[2]
+end
+getperiph = function(name)
+  local out = exec(" local out = {} for k,v in pairs(peripheral.wrap('"..name.."')) do out[k] = false end return out")
+  for k,v in pairs(out) do
+    out[k] = function(...)
+      return exec("peripheral.call",name,k,...)
+    end
+  end
+  return out
+end
