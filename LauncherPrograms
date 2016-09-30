@@ -5,8 +5,10 @@
     "nbstudio",
     "EncryptionAPI",
     "EasyPlay",
+    "rcall",
   },
   {
+    false,
     false,
     false,
     false,
@@ -17,5 +19,6 @@
     "https://raw.githubusercontent.com/TheDacinator/DacLauncher/master/nbstudio.lua",
     "https://raw.githubusercontent.com/TheDacinator/DacLauncher/master/encryption.lua",
     "https://raw.githubusercontent.com/TheDacinator/DacLauncher/master/EasyPlay",
+    "https://raw.githubusercontent.com/TheDacinator/DacLauncher/master/rcall",
   },
 }
