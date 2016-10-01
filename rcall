@@ -3,6 +3,8 @@ local cleanenv = getfenv()
 local functions = loadstring(http.get('https://raw.githubusercontent.com/TheDacinator/DacLauncher/master/encryption.lua').readAll())
 local encryption = {}
 local connected = false
+local rnreceive = rednet.receive
+setfenv(rnreceive,cleanenv)
 setfenv(functions,encryption)
 functions()
 for key,value in pairs(encryption) do
@@ -25,13 +27,12 @@ local makeconn = function(side,channel,key)
     rednet.send(channel,encryption.encrypt(key,removeenter(textutils.serialize(message))),"rcall")
   end
   receive = function(e,a,b,c)
-    local os.pullEventRaw = pullEvent
     local id,message,protocol = nil
     if e == "rednet_message" and a and c == "rcall" and textutils.unserialize(encryption.decrypt(key,b)) then
       return textutils.unserialize(encryption.decrypt(key,b))
     elseif not e then
       while true do
-        id,message,protocol = rednet.receive("rcall")
+        id,message,protocol = rnreceive("rcall")
         if protocol == "rcall" and textutils.unserialize(encryption.decrypt(key,message)) then
           break
         end
