@@ -1,3 +1,4 @@
+local pullEvent = os.pullEventRaw
 local cleanenv = getfenv()
 local functions = loadstring(http.get('https://raw.githubusercontent.com/TheDacinator/DacLauncher/master/encryption.lua').readAll())
 local encryption = {}
@@ -37,6 +38,15 @@ local makeconn = function(side,channel,key)
       return textutils.unserialize(encryption.decrypt(key,message))
     end
   end
+  _G.os.pullEventRaw = function(...)
+    local args = table.pack(pullEvent(...))
+    local message = receive(table.unpack(args))
+    if message and type(message) == "table" and message[1] == "event" then
+      return table.unpack(message[2])
+    else
+      return table.unpack(args)
+    end
+  end
 end
 connect = function(side,channel,key)
   if not key then
@@ -50,8 +60,9 @@ host = function()
     error("Please Connect First!")
   end
   while true do
-    local message = receive()
-    if message[1] == "exec" then
+    local args = table.pack(os.pullEvent())
+    local message = receive(table.unpack(args))
+    if message and message[1] == "exec" then
       table.remove(message,1)
       local func = message[1]
       table.remove(message,1)
@@ -62,6 +73,8 @@ host = function()
         out = loadstring("return "..func)()(table.unpack(message))
       end
       send({"out",out})
+    elseif args[1] ~= "rednet_message" then
+      send({"event",args})
     end
   end
 end
