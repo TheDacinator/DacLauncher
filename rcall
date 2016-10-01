@@ -80,7 +80,7 @@ getperiph = function(name,index)
   for k,v in pairs(out) do
     if index then
       out[k] = function(...)
-        return exec("table.pack(peripheral.find('"..name.."'))["..index.."]",...)
+        return exec("table.pack(peripheral.find('"..name.."'))["..index.."]",k,...)
       end
     else
       out[k] = function(...)
