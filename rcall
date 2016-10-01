@@ -23,15 +23,19 @@ local makeconn = function(side,channel,key)
   send = function(message)
     rednet.send(channel,encryption.encrypt(key,removeenter(textutils.serialize(message))),"rcall")
   end
-  receive = function()
+  receive = function(a,b,c)
     local id,message,protocol = nil
-    while true do
-      id,message,protocol = rednet.receive("rcall")
-      if protocol == "rcall" and textutils.unserialize(encryption.decrypt(key,message)) then
-        break
+    if id and protocol == "rcall" and textutils.unserialize(encryption.decrypt(key,message)) then
+      return textutils.unserialize(encryption.decrypt(key,b))
+    else
+      while true do
+        id,message,protocol = rednet.receive("rcall")
+        if protocol == "rcall" and textutils.unserialize(encryption.decrypt(key,message)) then
+          break
+        end
       end
+      return textutils.unserialize(encryption.decrypt(key,message))
     end
-    return textutils.unserialize(encryption.decrypt(key,message))
   end
 end
 connect = function(side,channel,key)
