@@ -25,7 +25,7 @@ local makeconn = function(side,channel,key)
   end
   receive = function(a,b,c)
     local id,message,protocol = nil
-    if id and protocol == "rcall" and textutils.unserialize(encryption.decrypt(key,message)) then
+    if a and c == "rcall" and textutils.unserialize(encryption.decrypt(key,b)) then
       return textutils.unserialize(encryption.decrypt(key,b))
     else
       while true do
