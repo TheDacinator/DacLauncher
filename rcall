@@ -78,8 +78,14 @@ getperiph = function(name,index)
     out = exec(" local out = {} for k,v in pairs(peripheral.wrap('"..name.."')) do out[k] = false end return out")
   end
   for k,v in pairs(out) do
-    out[k] = function(...)
-      return exec("peripheral.call",name,k,...)
+    if index then
+      out[k] = function(...)
+        return exec("table.pack(peripheral.find('"..name.."'))["..index.."]",...)
+      end
+    else
+      out[k] = function(...)
+        return exec("peripheral.call",name,k,...)
+      end
     end
   end
   return out
