@@ -110,4 +110,5 @@ emuperiph = function()
   out.getNames = function(tbl)
     return exec("peripheral.getNames",tbl)
   end
+  return out
 end
