@@ -79,3 +79,35 @@ getperiph = function(name)
   end
   return out
 end
+emuperiph = function()
+  local out = {}
+  out.isPresent = function(side)
+    local names = exec("peripheral.getNames")
+    local out = false
+    for i = 1,#names do
+      if names[i] == side then
+        out = true
+        break
+      end
+    end
+    return out
+  end
+  out.getType = function(side)
+    return exec("peripheral.getType",side)
+  end
+  out.getMethods = function(side)
+    return exec("peripheral.getMethods",side)
+  end
+  out.call = function(...)
+    return exec("peripheral.call",...)
+  end
+  out.wrap = function(side)
+    return getperiph(side)
+  end
+  out.find = function(...)
+    return exec("peripheral.find",...)
+  end
+  out.getNames = function(tbl)
+    return exec("peripheral.getNames",tbl)
+  end
+end
