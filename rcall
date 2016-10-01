@@ -36,7 +36,7 @@ local makeconn = function(side,channel,key)
 end
 connect = function(side,channel,key)
   if not key then
-    key = ""
+    key = " "
   end
   makeconn(side,channel,key)
   connected = true
