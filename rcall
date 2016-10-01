@@ -70,8 +70,12 @@ exec = function(...)
   send(message)
   return receive()[2]
 end
-getperiph = function(name)
-  local out = exec(" local out = {} for k,v in pairs(peripheral.wrap('"..name.."')) do out[k] = false end return out")
+getperiph = function(name,index)
+  if index then
+    local out = exec(" local out = {} for k,v in pairs(table.pack(peripheral.find('"..name.."'))["..index.."]) do out[k] = false end return out")
+  else
+    local out = exec(" local out = {} for k,v in pairs(peripheral.wrap('"..name.."')) do out[k] = false end return out")
+  end
   for k,v in pairs(out) do
     out[k] = function(...)
       return exec("peripheral.call",name,k,...)
@@ -105,9 +109,9 @@ emuperiph = function()
     return getperiph(side)
   end
   out.find = function(str)
-    local out exec(" local find = table.pack(peripheral.find('"..str.."')) local out = {} for k,v in pairs(find) do out[k] = false end return out")
+    local out = exec(" local find = table.pack(peripheral.find('"..str.."')) local out = {} for k,v in pairs(find) do out[k] = false end return out")
     for k,v in pairs(out) do
-      out[k] = getperiph(k)
+      out[k] = getperiph(str,k)
     end
     return table.unpack(out)
   end
