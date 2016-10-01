@@ -104,11 +104,15 @@ emuperiph = function()
   out.wrap = function(side)
     return getperiph(side)
   end
-  out.find = function(...)
-    return exec("peripheral.find",...)
+  out.find = function(str)
+    local out exec(" local find = table.pack(peripheral.find('"..str.."')) local out = {} for k,v in pairs(find) do out[k] = false end return out")
+    for k,v in pairs(out) do
+      out[k] = getperiph(k)
+    end
+    return table.unpack(out)
   end
-  out.getNames = function(tbl)
-    return exec("peripheral.getNames",tbl)
+  out.getNames = function(str)
+    return exec("peripheral.getNames",str)
   end
   return out
 end
