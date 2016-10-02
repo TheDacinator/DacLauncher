@@ -1,6 +1,12 @@
 --Variables
+local tArgs = {...}
 local x,y = term.getSize()
 local song = {["len"]=10,["tempo"] = 120,["author"] = '',["name"] = ""}
+if tArgs[1] then
+  local file = fs.open(tArgs[1],"r")
+  song = textutils.unserialize(file.readAll())
+  file.close()
+end
 local scroll = 0
 local xscroll = 0
 local textnote = "right"
