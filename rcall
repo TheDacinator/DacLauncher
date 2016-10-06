@@ -8,7 +8,7 @@ setfenv(rnreceive,cleanenv)
 setfenv(functions,getfenv())
 local generateNonce,encrypt,decrypt = functions()
 local encryption = functions()
-generateNonce = encryption.generateNonce
+generateKey = encryption.generateNonce
 local removeenter = function(str)
   local out = ""
   for i = 1,string.len(str) do
