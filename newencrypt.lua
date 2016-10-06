@@ -151,4 +151,4 @@ end
 local function decrypt(key,data)
   return tostring(crypt(data[2], key, data[1]))
 end
-return generateNonce,encrypt,decrypt
+return {['generateNonce'] = generateNonce,['encrypt'] = encrypt,['decrypt'] = decrypt}
