@@ -5,11 +5,10 @@ local encryption = {}
 local connected = false
 local rnreceive = rednet.receive
 setfenv(rnreceive,cleanenv)
-setfenv(functions,encryption)
-functions()
-for key,value in pairs(encryption) do
-  setfenv(encryption[key],cleanenv)
-end
+setfenv(functions,getfenv())
+local generateNonce,encrypt,decrypt = functions()
+local encryption = functions()
+generateNonce = encryption.generateNonce
 local removeenter = function(str)
   local out = ""
   for i = 1,string.len(str) do
