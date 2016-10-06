@@ -1,7 +1,7 @@
 local pullEvent = os.pullEventRaw
 local cleanenv = getfenv()
 local functions = loadstring(http.get('https://raw.githubusercontent.com/TheDacinator/DacLauncher/master/newencrypt.lua').readAll())
-local encryption = cleanenv
+local encryption = {}
 local connected = false
 local rnreceive = rednet.receive
 setfenv(rnreceive,cleanenv)
