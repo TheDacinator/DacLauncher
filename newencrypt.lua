@@ -137,17 +137,17 @@ local function crypt(data, key, nonce, cntr, round)
 	return setmetatable(out, mt)
 end
 
-function generateNonce(size)
+local function generateNonce(size)
   local n = {}
   for i = 1, size do n[i] = math.random(0, 0xFF) end
   return setmetatable(n, mt)
 end
 
-function encrypt(key,ptext)
+local function encrypt(key,ptext)
   local nonce = generateNonce(12)
   return {nonce, crypt(ptext, key, nonce)}
 end
 
-function decrypt(key,data)
+local function decrypt(key,data)
   return tostring(crypt(data[2], key, data[1]))
 end
