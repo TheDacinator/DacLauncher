@@ -69,9 +69,9 @@ host = function()
       table.remove(message,1)
       local out = nil
       if string.sub(func,1,1) == " " then
-        out = loadstring(string.sub(func,2))(table.unpack(message))
+        out = table.pack(loadstring(string.sub(func,2))(table.unpack(message)))
       else
-        out = loadstring("return "..func)()(table.unpack(message))
+        out = table.pack(loadstring("return "..func)()(table.unpack(message)))
       end
       send({"out",out})
     elseif args[1] ~= "rednet_message" then
@@ -86,7 +86,7 @@ exec = function(...)
   local message = table.pack(...)
   table.insert(message,1,"exec")
   send(message)
-  return receive()[2]
+  return table.unpack(receive()[2])
 end
 getperiph = function(name,index)
   local out = {}
@@ -142,6 +142,27 @@ emuperiph = function()
   end
   out.getNames = function(str)
     return exec("peripheral.getNames",str)
+  end
+  return out
+end
+emufs = function()
+  local out = {}
+  out.open = function(path,mode)
+    local out = exec(" local funcs = fs.open('"..path.."','"..mode.."') local out = {} for k,v in pairs(funcs) do out[k] = false end funcs.close() return out")
+    for k,v in pairs(out) do
+      out[k] = function(...)
+        return exec("function(...) local inp = {...} local file = fs.open(inp[1],inp[2]) local out = file[inp[3]](table.unpack(inp,4)) file.close() return out end",path,mode,k,...)
+      end
+    end
+    out.close = function() end
+    return out
+  end
+  for k,v in pairs(fs) do
+    if k ~= "open" then
+      out[k] = function(...)
+        return exec("fs."..k,...)
+      end
+    end
   end
   return out
 end
