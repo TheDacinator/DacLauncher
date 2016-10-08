@@ -6,8 +6,10 @@
     "EncryptionAPI",
     "EasyPlay",
     "rcall",
+    "BundledIO",
   },
   {
+    false,
     false,
     false,
     false,
@@ -20,5 +22,6 @@
     "https://raw.githubusercontent.com/TheDacinator/DacLauncher/master/encryption.lua",
     "https://raw.githubusercontent.com/TheDacinator/DacLauncher/master/EasyPlay",
     "https://raw.githubusercontent.com/TheDacinator/DacLauncher/master/rcall",
+    "https://raw.githubusercontent.com/TheDacinator/DacLauncher/master/BundledIO.lua",
   },
 }
